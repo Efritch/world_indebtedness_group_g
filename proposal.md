@@ -10,8 +10,14 @@ In this project we will be looking at comparing countries indebtedness beginning
 
 The data set chosen from the IMF website looks at the indicator: Net Lending/borrowing also referred to as overall balance (% of GDP).
 
+Our data is structed as follows:
+* A column that contains the name of a country (stored as strings)
+* Columns that contains the year of the data for each country. The year columns start with 1990 and go through 2020.
+Here is a screen shot of the metadata.
+    ![Worldmap](images/metadata_image.png)
+
 Here is a screen shot of a sample of the data we will be working with.
-![Sample of Data](images/data_snapshot.png)
+    ![Sample of Data](images/data_snapshot.png)
 
 
 The world map will be highlighting the overall balance ratio for each country using color codes. While each country will display on its own, each country will also be included in a specific category. These categories are:
