@@ -24,6 +24,13 @@ function outputData(data) {
   };
 }
 
+$(document).ready(function() {
+  $("#sidebarCollapse").on("click", function() {
+    $("#sidebar").toggleClass("active");
+    $(this).toggleClass("active");
+  });
+});
+
 
 // Load all 4 data files so we can utilze
 d3.queue()
