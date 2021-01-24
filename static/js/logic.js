@@ -7,3 +7,6 @@ $(document).ready(function() {
     $(this).toggleClass("active");
   });
 });
+
+// var someJavaScriptVar = '{{ db_data[0]}}';
+// console.log(someJavaScriptVar);
