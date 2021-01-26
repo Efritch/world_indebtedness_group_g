@@ -1,3 +1,4 @@
+
 // Navbar Logic
 $(document).ready(function() {
   $("#sidebarCollapse").on("click", function() {
@@ -6,20 +7,19 @@ $(document).ready(function() {
   });
 });
 
-fetch('/db_data')
-.then(response => {
-    return response.json();
-}).then(text => {
-    console.log('GET json data from Flask endpoint');
-    console.log(text); 
-}); 
+// fetch('/db_data')
+// .then(response => {
+//     return response.json();
+// }).then(text => {
+//     console.log('GET json data from Flask endpoint');
+//     console.log(text); 
+// }); 
 
 var advancedCounrtries = ["Australia", "Austria", "Belgium", "Canada", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hong Kong SAR", "Iceland", "Ireland", "Israel", "Italy", "Japan", "Korea, Republic of", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "New Zealand", "Norway", "Portugal", "Singapore", "Slovak Republic", "Slovenia", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
-var emergingCountries = ["Algeria", "Angola", "Argentina", "Azerbaijan", "Belarus", "Brazil", "Chile", "China, People's Republic of", "Colombia", "Croatia", "Dominican Republic", "Ecuador", "Egypt", "Hungary", "India", "Indonesia", "Iran", "Kazakhstan", "Kuwait", "Libya", "Malaysia", "Mexico", "Morocco", "Oman", "Pakistan", "Peru", "Philippines", "Poland", "Qatar", "Romania", "Russian Federation", "Saudi Arabia", "South Africa", "Sri Lanka", "Thailand", "Turkey", "Ukraine", "United Arab Emirates", "Uruguay", "Venezuela"];
+var emergingCountries = ["Algeria", "Angola", "Argentina", "Azerbaijan", "Belarus", "Brazil", "Chile", "China, People's Republic of", "Colombia", "Croatia", "Dominican Republic", "Ecuador", "Egypt", "Hungary", "India", "Indonesia", "Iran", "Kazakhstan", "Kuwait", "Libya", "Malaysia", "Mexico", "Morocco", "Oman", "Pakistan", "Peru", "Philippines", "Poland", "Qatar", "Russian Federation", "Saudi Arabia", "South Africa", "Sri Lanka", "Thailand", "Turkey", "Ukraine", "United Arab Emirates", "Uruguay", "Venezuela"];
 var lowCountries = ["Bangladesh", "Benin", "Bolivia", "Burkina Faso", "Cambodia", "Cameroon", "Chad", "Congo, Dem. Rep. of the","Congo, Republic of ", "Cote d'Ivoire", "Ethiopia", "Ghana", "Guinea", "Haiti", "Honduras", "Kenya", "Kyrgyz Republic", "Lao P.D.R.", "Madagascar", "Mali", "Moldova", "Mongolia", "Mozambique", "Myanmar", "Nepal", "Nicaragua", "Niger", "Nigeria", "Papua New Guinea", "Rwanda", "Senegal", "Sudan", "Tajikistan", "Tanzania", "Uganda", "Uzbekistan", "Vietnam", "Yemen", "Zambia", "Zimbabwe"];
 
 highLevelCategories = ["Advanced economies","Emerging Market and Middle-Income Economies","Low-Income Developing Countries"];
-chartYears = [2017,2018,2019,2020];
 
 let lendingBorrowingData = [
   {
@@ -4776,114 +4776,123 @@ let lendingBorrowingData = [
   }
  ]
 
-//  // Delete all years that are not 2017 - 2020
-//  lendingBorrowingData.forEach(function(object) {
-//    for (year=1990;year < 2017;year++){
 
-//     delete object[year];
-//    };
 
-//    for (year=2021;year < 2026;year++){
+// Only deal with years 2017 - 2020
+ let lendingBorrowingYearData = lendingBorrowingData.filter(function(data) {
+  return data.Year === 2017 || data.Year === 2018  || data.Year === 2019  || data.Year === 2020 ;
+})
 
-//     delete object[year];
-//    };
-// });
+let highLevelCategoriesValues = [];
+highLevelCategories.forEach(function(category) {
 
-let lendingBorrowingYearData = [];
-lendingBorrowingData.forEach(function(year) {
-  lendingBorrowingYearData.push(lendingBorrowingData.filter(foundObj => foundObj["year"]===year));
+  lendingBorrowingYearData.forEach(function(yearData) {
+    countryDict = {};
+    countryDict['Year'] = yearData.Year;
+    countryDict['Country'] = category;
+    countryDict['Value'] = yearData[category];
+    highLevelCategoriesValues.push(countryDict);
+  });
+
 });
-console.log(lendingBorrowingYearData);
+console.log(highLevelCategoriesValues);
 
 
+let advancedCountriesValues = [];
+advancedCounrtries.forEach(function(country) {
+  lendingBorrowingYearData.forEach(function(yearData) {
+    countryDict = {};
+    countryDict['Year'] = yearData.Year;
+    countryDict['Country'] = country;
+    countryDict['Value'] = yearData[country];
+    advancedCountriesValues.push(countryDict);    
+    });
 
-// let highLevelCategoriesValues = [];
-// highLevelCategories.forEach(function(category) {
-//   highLevelCategoriesValues.push(lendingBorrowingData.filter(foundObj => foundObj["Net lending"]["borrowing (also referred as overall balance) (% of GDP)"]===category));
-// });
+  });
+console.log(advancedCountriesValues);
 
-// console.log(advancedCounrtries);
-// let advancedCountriesValues = [];
-// advancedCounrtries.forEach(function(category) {
-//   advancedCountriesValues.push(lendingBorrowingData.filter(foundObj => foundObj["Net lending"]["borrowing (also referred as overall balance) (% of GDP)"]===category));
-// });
-// console.log(advancedCountriesValues);
+let emergingCountriesValues = [];
+emergingCountries.forEach(function(country) {
+  lendingBorrowingYearData.forEach(function(yearData) {
+    countryDict = {};
+    countryDict['Year'] = yearData.Year;
+    countryDict['Country'] = country;
+    countryDict['Value'] = yearData[country];
+    emergingCountriesValues.push(countryDict);
+    });
 
-// console.log(emergingCountries);
-// let emergingCountriesValues = [];
-// emergingCountries.forEach(function(category) {
-//   emergingCountriesValues.push(lendingBorrowingData.filter(foundObj => foundObj["Net lending"]["borrowing (also referred as overall balance) (% of GDP)"]===category));
-// });
-// console.log(emergingCountriesValues);
+  });
+console.log(emergingCountriesValues);
 
-// console.log(lowCountries);
-// let lowCountriesValues = [];
-// lowCountries.forEach(function(category) {
-//   lowCountriesValues.push(lendingBorrowingData.filter(foundObj => foundObj["Net lending"]["borrowing (also referred as overall balance) (% of GDP)"]===category));
-// });
-// console.log(lowCountriesValues);
+    
+let lowCountriesValues = [];
+lowCountries.forEach(function(country) {
+  lendingBorrowingYearData.forEach(function(yearData) {
+    countryDict = {};
+    countryDict['Year'] = yearData.Year;
+    countryDict['Country'] = country;
+    countryDict['Value'] = yearData[country];
+    lowCountriesValues.push(countryDict);    
+    });
 
-// // Chart Params
-// var svgWidth = 960;
-// var svgHeight = 500;
+  });
+console.log(lowCountriesValues);
 
-// var margin = { top: 20, right: 40, bottom: 60, left: 50 };
+// Chart Params
+var svgWidth = 960;
+var svgHeight = 500;
 
-// var width = svgWidth - margin.left - margin.right;
-// var height = svgHeight - margin.top - margin.bottom;
+var margin = { top: 20, right: 40, bottom: 60, left: 50 };
 
-// // Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
-// var svg = d3
-//   .select("body")
-//   .append("svg")
-//   .attr("width", svgWidth)
-//   .attr("height", svgHeight);
+var width = svgWidth - margin.left - margin.right;
+var height = svgHeight - margin.top - margin.bottom;
 
-// var chartGroup = svg.append("g")
-//   .attr("transform", `translate(${margin.left}, ${margin.top})`);
+// Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
+var svg = d3
+  .select("#line")
+  .append("svg")
+  .attr("width", svgWidth)
+  .attr("height", svgHeight);
 
-// //   // Create a function to parse date and time
-// //   var parseTime = d3.timeParse("%d-%b-%Y");
+var chartGroup = svg.append("g")
+  .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-//   // Format the data
-//   highLevelCategoriesValues.forEach(function(data) {
-//     chartYears.forEach(function(year) {
-//       data.year = +data.year
-//     });
-//   });
+  var chosenYAxis = "Totals"
 
-//   let year1990max = d3.max(highLevelCategoriesValues["2017"])
-//   console.log(year1990max);
+  // Format the data
+  highLevelCategoriesValues.forEach(function(data) {
+      data.Year = +data.Year;
+      data.Value = +data.Value;
+    });
   
-//   // Create scaling functions
-//   var xLinearScale = d3.scaleLinear()
-//     .domain([2017, 2020])
-//     .range([2017, 2020]);
+  // Create scaling functions
+  var xLinearScale = d3.scaleLinear()
+    .domain([2017, 2020])
+    .range([0, width]);
 
-//   var yLinearScale = d3.scaleLinear()
-//     .domain([0, d3.max(highLevelCategoriesValues, data => data.dow_index)])
-//     .range([height, 0]);
+  var yLinearScale = d3.scaleLinear()
+    .domain([d3.min(highLevelCategoriesValues, d => d.Value), d3.max(highLevelCategoriesValues, d => d.Value)])
+    .range([height, 0]);
 
-//   var yLinearScale2 = d3.scaleLinear()
-//     .domain([0, d3.max(smurfData, d => d.smurf_sightings)])
-//     .range([height, 0]);
+  // var yLinearScale2 = d3.scaleLinear()
+  //   .domain([0, d3.max(smurfData, d => d.smurf_sightings)])
+  //   .range([height, 0]);
 
-//   // Create axis functions
-//   var bottomAxis = d3.axisBottom(xTimeScale)
-//     .tickFormat(d3.timeFormat("%d-%b-%Y"));
-//   var leftAxis = d3.axisLeft(yLinearScale1);
-//   var rightAxis = d3.axisRight(yLinearScale2);
+  // Create axis functions
+  var bottomAxis = d3.axisBottom(xLinearScale)
+  var leftAxis = d3.axisLeft(yLinearScale);
 
-//   // Add x-axis
-//   chartGroup.append("g")
-//     .attr("transform", `translate(0, ${height})`)
-//     .call(bottomAxis);
+  // Add x-axis
+  chartGroup.append("g")
+    .attr("transform", `translate(0, ${height})`)
+    .call(bottomAxis)
+    .ticks(5);
 
-//   // Add y1-axis to the left side of the display
-//   chartGroup.append("g")
-//     // Define the color of the axis text
-//     .classed("green", true)
-//     .call(leftAxis);
+  // Add y-axis to the left side of the display
+  chartGroup.append("g")
+    // Define the color of the axis text
+    .classed("green", true)
+    .call(leftAxis);
 
 //   // Add y2-axis to the right side of the display
 //   chartGroup.append("g")
@@ -4892,20 +4901,35 @@ console.log(lendingBorrowingYearData);
 //     .attr("transform", `translate(${width}, 0)`)
 //     .call(rightAxis);
 
-//   // Line generators for each line
-//   var line1 = d3.line()
-//     .x(d => xTimeScale(d.date))
-//     .y(d => yLinearScale1(d.dow_index));
+highLevelCategories.forEach(function(category) {
+  let lineData = highLevelCategoriesValues.filter(foundObj => foundObj.Country === category);
+  // Line generators for each line
+  var line = d3.line()
+    .x(d => xLinearScale(d.Year))
+    .y(d => yLinearScale(d.Value));
+  console.log(line);
+  // Append a path for line1
+  chartGroup.append("path")
+    .data([lineData])
+    .attr("d", line)
+    .classed("line green", true);
+});
+
+
+
+
+
+
+  // Append a path for line1
+  // chartGroup.append("path")
+  //   .data([highLevelCategoriesValues.filter(data => data.Country = "Advanced economies")])
+  //   .attr("d", line1)
+  //   .classed("line green", true);
+
 
 //   var line2 = d3.line()
 //     .x(d => xTimeScale(d.date))
 //     .y(d => yLinearScale2(d.smurf_sightings));
-
-//   // Append a path for line1
-//   chartGroup.append("path")
-//     .data([smurfData])
-//     .attr("d", line1)
-//     .classed("line green", true);
 
 //   // Append a path for line2
 //   chartGroup.append("path")
@@ -4913,16 +4937,16 @@ console.log(lendingBorrowingYearData);
 //     .attr("d", line2)
 //     .classed("line blue", true);
 
-//   // Append axes titles
-//   chartGroup.append("text")
-//   .attr("transform", `translate(${width / 2}, ${height + margin.top + 20})`)
-//     .classed("dow-text text", true)
-//     .text("Dow Index");
+  // Append axes titles
+  // chartGroup.append("text")
+  // .attr("transform", `translate(${width / 2}, ${height + margin.top + 20})`)
+  //   .classed("dow-text text", true)
+  //   .text("Dow Index");
 
-//   chartGroup.append("text")
-//   .attr("transform", `translate(${width / 2}, ${height + margin.top + 37})`)
-//     .classed("smurf-text text", true)
-//     .text("Smurf Sightings");
+  // chartGroup.append("text")
+  // .attr("transform", `translate(${width / 2}, ${height + margin.top + 37})`)
+  //   .classed("smurf-text text", true)
+  //   .text("Smurf Sightings");
 // }).catch(function(error) {
 //   console.log(error);
 // });
