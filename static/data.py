@@ -19,11 +19,15 @@ import pymongo
 #print(merged_years)
 #merged_years.to_csv("data/Rev_Exp_years_output.csv", index=False)
 db_name = "world_indebtedness"
-uri = f"mongodb+srv://web_user:Uj3z9lLuFWfxoOfZ@projectcluster.2m1ao.mongodb.net/{db_name}?retryWrites=true&w=majority"
+uri = f"mongodb://web_user:Uj3z9lLuFWfxoOfZ@projectcluster.2m1ao.mongodb.net/{db_name}?retryWrites=true&w=majority"
 mongo = pymongo.MongoClient(uri)
 revenue_expenditure_col = mongo.db.rev_exp
 print(revenue_expenditure_col)
 
-revenue_expenditure = pd.read_csv("data/Rev_Exp_years_output.csv)")
+revenue_expenditure = pd.read_csv("data/Rev_Exp_years_output.csv")
 
-revenue_expenditure_col.update({}, revenue_expenditure.to_dict(), upsert =True)
+revenue_expenditure_col.updateMany({}, revenue_expenditure.to_dict(), upsert =True)
+
+
+
+
