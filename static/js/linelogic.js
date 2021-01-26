@@ -1,3 +1,25 @@
+// Function to update Y-scale on click on axis label
+function yScale(chartData, height) {
+  // create scales
+  var yLinearScale = d3.scaleLinear()
+    .domain([d3.min(chartData, d => d.Value),
+      d3.max(chartData, d => d.Value)
+    ])
+    .range([height, 0]);
+  return yLinearScale;
+  }
+
+function renderLine(lineData) {
+  var line = d3.line()
+    .x(d => xLinearScale(d.Year))
+    .y(d => yLinearScale(d.Value));
+
+  // Append a path for line1
+  chartGroup.append("path")
+    .data([lineData])
+    .attr("d", line)
+    .classed("line green", true);
+}
 
 // Navbar Logic
 $(document).ready(function() {
@@ -15,11 +37,11 @@ $(document).ready(function() {
 //     console.log(text); 
 // }); 
 
-var advancedCounrtries = ["Australia", "Austria", "Belgium", "Canada", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hong Kong SAR", "Iceland", "Ireland", "Israel", "Italy", "Japan", "Korea, Republic of", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "New Zealand", "Norway", "Portugal", "Singapore", "Slovak Republic", "Slovenia", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
+var advancedCountries = ["Australia", "Austria", "Belgium", "Canada", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hong Kong SAR", "Iceland", "Ireland", "Israel", "Italy", "Japan", "Korea, Republic of", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "New Zealand", "Norway", "Portugal", "Singapore", "Slovak Republic", "Slovenia", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 var emergingCountries = ["Algeria", "Angola", "Argentina", "Azerbaijan", "Belarus", "Brazil", "Chile", "China, People's Republic of", "Colombia", "Croatia", "Dominican Republic", "Ecuador", "Egypt", "Hungary", "India", "Indonesia", "Iran", "Kazakhstan", "Kuwait", "Libya", "Malaysia", "Mexico", "Morocco", "Oman", "Pakistan", "Peru", "Philippines", "Poland", "Qatar", "Russian Federation", "Saudi Arabia", "South Africa", "Sri Lanka", "Thailand", "Turkey", "Ukraine", "United Arab Emirates", "Uruguay", "Venezuela"];
 var lowCountries = ["Bangladesh", "Benin", "Bolivia", "Burkina Faso", "Cambodia", "Cameroon", "Chad", "Congo, Dem. Rep. of the","Congo, Republic of ", "Cote d'Ivoire", "Ethiopia", "Ghana", "Guinea", "Haiti", "Honduras", "Kenya", "Kyrgyz Republic", "Lao P.D.R.", "Madagascar", "Mali", "Moldova", "Mongolia", "Mozambique", "Myanmar", "Nepal", "Nicaragua", "Niger", "Nigeria", "Papua New Guinea", "Rwanda", "Senegal", "Sudan", "Tajikistan", "Tanzania", "Uganda", "Uzbekistan", "Vietnam", "Yemen", "Zambia", "Zimbabwe"];
 
-highLevelCategories = ["Advanced economies","Emerging Market and Middle-Income Economies","Low-Income Developing Countries"];
+groupCategories = ["Advanced economies","Emerging Market and Middle-Income Economies","Low-Income Developing Countries"];
 
 let lendingBorrowingData = [
   {
@@ -4783,28 +4805,30 @@ let lendingBorrowingData = [
   return data.Year === 2017 || data.Year === 2018  || data.Year === 2019  || data.Year === 2020 ;
 })
 
-let highLevelCategoriesValues = [];
-highLevelCategories.forEach(function(category) {
+let groupCategoriesValues = [];
+groupCategories.forEach(function(category) {
 
   lendingBorrowingYearData.forEach(function(yearData) {
     countryDict = {};
     countryDict['Year'] = yearData.Year;
     countryDict['Country'] = category;
-    countryDict['Value'] = yearData[category];
-    highLevelCategoriesValues.push(countryDict);
+    countryDict['Value'] = yearData[category]
+    if (isNaN(countryDict['Value'])) countryDict['Value'] = 0;
+    groupCategoriesValues.push(countryDict);
   });
 
 });
-console.log(highLevelCategoriesValues);
+console.log(groupCategoriesValues);
 
 
 let advancedCountriesValues = [];
-advancedCounrtries.forEach(function(country) {
+advancedCountries.forEach(function(country) {
   lendingBorrowingYearData.forEach(function(yearData) {
     countryDict = {};
     countryDict['Year'] = yearData.Year;
     countryDict['Country'] = country;
     countryDict['Value'] = yearData[country];
+    if (isNaN(countryDict['Value'])) countryDict['Value'] = 0;
     advancedCountriesValues.push(countryDict);    
     });
 
@@ -4818,6 +4842,7 @@ emergingCountries.forEach(function(country) {
     countryDict['Year'] = yearData.Year;
     countryDict['Country'] = country;
     countryDict['Value'] = yearData[country];
+    if (isNaN(countryDict['Value'])) countryDict['Value'] = 0;
     emergingCountriesValues.push(countryDict);
     });
 
@@ -4832,12 +4857,36 @@ lowCountries.forEach(function(country) {
     countryDict['Year'] = yearData.Year;
     countryDict['Country'] = country;
     countryDict['Value'] = yearData[country];
+        if (isNaN(countryDict['Value'])) countryDict['Value'] = 0;
     lowCountriesValues.push(countryDict);    
     });
 
   });
 console.log(lowCountriesValues);
 
+// Format the data
+groupCategoriesValues.forEach(function(data) {
+  data.Year = +data.Year;
+  data.Value = +data.Value;
+});
+
+advancedCountriesValues.forEach(function(data) {
+  data.Year = +data.Year;
+  data.Value = +data.Value;
+});
+
+emergingCountriesValues.forEach(function(data) {
+  data.Year = +data.Year;
+  data.Value = +data.Value;
+});
+
+lowCountriesValues.forEach(function(data) {
+  data.Year = +data.Year;
+  data.Value = +data.Value;
+});
+
+// console.log('after setting');
+// console.log(advancedLineData);
 // Chart Params
 var svgWidth = 960;
 var svgHeight = 500;
@@ -4846,6 +4895,14 @@ var margin = { top: 20, right: 40, bottom: 60, left: 50 };
 
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
+
+  // Define the svgArea
+  var svgArea = d3.select("body").select("svg");
+ 
+  // clear svg is not empty
+  if (!svgArea.empty()) {
+    svgArea.remove();
+  }
 
 // Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
 var svg = d3
@@ -4857,26 +4914,17 @@ var svg = d3
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-  var chosenYAxis = "Totals"
+  var chosenYAxis = "advanced"
 
-  // Format the data
-  highLevelCategoriesValues.forEach(function(data) {
-      data.Year = +data.Year;
-      data.Value = +data.Value;
-    });
   
   // Create scaling functions
   var xLinearScale = d3.scaleLinear()
     .domain([2017, 2020])
     .range([0, width]);
+          
+    // Update x scale for new data
+  var yLinearScale = yScale(advancedCountriesValues,height);
 
-  var yLinearScale = d3.scaleLinear()
-    .domain([d3.min(highLevelCategoriesValues, d => d.Value), d3.max(highLevelCategoriesValues, d => d.Value)])
-    .range([height, 0]);
-
-  // var yLinearScale2 = d3.scaleLinear()
-  //   .domain([0, d3.max(smurfData, d => d.smurf_sightings)])
-  //   .range([height, 0]);
 
   // Create axis functions
   var bottomAxis = d3.axisBottom(xLinearScale)
@@ -4885,8 +4933,7 @@ var chartGroup = svg.append("g")
   // Add x-axis
   chartGroup.append("g")
     .attr("transform", `translate(0, ${height})`)
-    .call(bottomAxis)
-    .ticks(5);
+    .call(bottomAxis);
 
   // Add y-axis to the left side of the display
   chartGroup.append("g")
@@ -4901,52 +4948,196 @@ var chartGroup = svg.append("g")
 //     .attr("transform", `translate(${width}, 0)`)
 //     .call(rightAxis);
 
-highLevelCategories.forEach(function(category) {
-  let lineData = highLevelCategoriesValues.filter(foundObj => foundObj.Country === category);
-  // Line generators for each line
-  var line = d3.line()
-    .x(d => xLinearScale(d.Year))
-    .y(d => yLinearScale(d.Value));
-  console.log(line);
-  // Append a path for line1
-  chartGroup.append("path")
-    .data([lineData])
-    .attr("d", line)
-    .classed("line green", true);
-});
-
-
-
-
-
-
-  // Append a path for line1
-  // chartGroup.append("path")
-  //   .data([highLevelCategoriesValues.filter(data => data.Country = "Advanced economies")])
-  //   .attr("d", line1)
-  //   .classed("line green", true);
-
-
-//   var line2 = d3.line()
-//     .x(d => xTimeScale(d.date))
-//     .y(d => yLinearScale2(d.smurf_sightings));
-
-//   // Append a path for line2
-//   chartGroup.append("path")
-//     .data([smurfData])
-//     .attr("d", line2)
-//     .classed("line blue", true);
-
-  // Append axes titles
-  // chartGroup.append("text")
-  // .attr("transform", `translate(${width / 2}, ${height + margin.top + 20})`)
-  //   .classed("dow-text text", true)
-  //   .text("Dow Index");
-
-  // chartGroup.append("text")
-  // .attr("transform", `translate(${width / 2}, ${height + margin.top + 37})`)
-  //   .classed("smurf-text text", true)
-  //   .text("Smurf Sightings");
-// }).catch(function(error) {
-//   console.log(error);
+// highLevelCategories.forEach(function(category) {
+//   let lineData = highLevelCategoriesValues.filter(foundObj => foundObj.Country === category);
+//   // Line generators for each line
+//   renderLine(lineData);
 // });
+
+
+
+
+
+advancedCountries.forEach(function(country) {
+  console.log(country);
+  let lineData = advancedCountriesValues.filter(foundObj => foundObj.Country === country);
+  console.log(lineData);
+  // Line generators for each line
+  renderLine(lineData);
+});
+  
+// Create group for two y-axis labels
+var yLabelsGroup = chartGroup.append("g")
+.attr("transform", "rotate(-90)");
+
+
+// Create the obesity label
+var advancedLabel = yLabelsGroup.append("text")
+.attr("x", 0 - (height/2)-100)
+.attr("y", -40)
+.attr("value", "advanced") // value to grab for event listener
+.classed("active", false)
+.classed("inactive", true)
+.text("Advanced economies");
+
+// Create the Smokes label
+var emergingLabel = yLabelsGroup.append("text")
+.attr("x", 0 - (height/2)-100)
+.attr("y", -30)
+.attr("value", "emerging") // value to grab for event listener
+.classed("active", false)
+.classed("inactive", true)        
+.text("Emerging Market");
+
+// Create the healthcare label
+var lowLabel = yLabelsGroup.append("text")
+.attr("x", 0 - (height/2)-100)
+.attr("y", -20)
+.attr("value", "low") // value to grab for event listener
+.classed("active", false)
+.classed("inactive", true)        
+.text("Low-Income");
+
+// Create the healthcare label
+var groupsLabel = yLabelsGroup.append("text")
+.attr("x", 0 - (height/2)-100)
+.attr("y", -10)
+.attr("value", "groups") // value to grab for event listener
+.classed("active", false)
+.classed("inactive", true)        
+.text("Advanced / Emerging / Low Income");
+
+// Change the chosenXAxis to active and not inactive
+if (chosenYAxis === "advanced") {
+advancedLabel
+  .classed("active", true)
+  .classed("inactive", false);
+} else if (chosenYAxis === "emerging") {
+  emergingLabel
+    .classed("active", true)
+    .classed("inactive", false);
+} else if (chosenYAxis === "low") {
+  lowLabel
+    .classed("active", true)
+    .classed("inactive", false);
+} else {
+  groupsLabel
+    .classed("active", true)
+    .classed("inactive", false);
+}
+
+// append x axis
+chartGroup.append("text")
+  .attr("transform", `translate(${width / 2}, ${height + 20})`)
+  .attr("y", 20)
+  .attr("x", 10)
+  .attr("dx", "1em")
+  .classed("axis-text", true)
+  .text("Years (2017-220)");
+
+
+var lineData;
+axis = yLabelsGroup.selectAll("text");
+axis.on("click", function() {
+  // Get value of selection
+  console.log('hello');
+  var yValue = d3.select(this).attr("value");
+
+  if (yValue !== chosenYAxis) {
+ 
+    // Replace chosenXAxis with value
+    chosenYAxis = yValue;
+
+    if (chosenYAxis === "advanced") {
+      advancedCountries.forEach(function(country) {
+        console.log('event')
+        console.log(country);
+        lineData = advancedCountriesValues.filter(foundObj => foundObj.Country === country);
+        console.log(lineData);
+      });
+    } else if (chosenYAxis === "emerging") {
+      emergingCountries.forEach(function(country) {
+        console.log('event')
+        console.log(country);
+        lineData = emergingCountriesValues.filter(foundObj => foundObj.Country === country);
+        console.log(lineData);
+      });
+    } else if (chosenYAxis === "low") {
+      lowCountries.forEach(function(country) {
+        console.log('event')
+        console.log(country);
+        lineData = lowCountriesValues.filter(foundObj => foundObj.Country === country);
+        console.log(lineData);
+      });
+    } else {
+      groupCategories.forEach(function(country) {
+        console.log('event')
+        console.log(country);
+        lineData = groupCategoriesValues.filter(foundObj => foundObj.Country === country);
+        console.log(lineData);
+      });
+    }
+   }
+
+
+    
+    // Update x scale for new data
+    yLinearScale = yScale(lineData, height);
+
+    renderLine(lineData);
+    
+    // Change classes to change bold text
+    if (chosenYAxis === "advanced") {
+        advancedLabel
+          .classed("active", true)
+          .classed("inactive", false);
+        emergingLabel
+          .classed("active", false)
+          .classed("inactive", true);
+        lowLabel
+          .classed("active", false)
+          .classed("inactive", true);
+        groupsLabel
+          .classed("active", false)
+          .classed("inactive", true);          
+      } else if (chosenYAxis === "emerging") {
+        emergingLabel
+          .classed("active", true)
+          .classed("inactive", false);
+        advancedLabel
+          .classed("active", false)
+          .classed("inactive", true);
+        lowLabel
+          .classed("active", false)
+          .classed("inactive", true);
+        groupsLabel
+          .classed("active", false)
+          .classed("inactive", true);              
+      } else if (chosenYAxis === "low") { 
+        lowLabel
+          .classed("active", true)
+          .classed("inactive", false);
+        advancedLabel
+          .classed("active", false)
+          .classed("inactive", true);
+        emergingLabel
+          .classed("active", false)
+          .classed("inactive", true);
+        groupsLabel
+          .classed("active", false)
+          .classed("inactive", true);             
+      } else {
+        groupsLabel
+          .classed("active", true)
+          .classed("inactive", false);
+        advancedLabel
+          .classed("active", false)
+          .classed("inactive", true);
+        emergingLabel
+          .classed("active", false)
+          .classed("inactive", true);
+        lowLabel
+          .classed("active", false)
+          .classed("inactive", true);
+      }            
+    });
