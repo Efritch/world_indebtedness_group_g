@@ -68,7 +68,7 @@ var svg = d3.select("#my_dataviz")
           "translate(" + margin.left + "," + margin.top + ")");
 
 //Read the data
-d3.csv("data/", function(data) {
+d3.csv("data/Rev_Exp_years_output.csv", function(data) {
 
   // Add X axis
   var x = d3.scaleLinear()
