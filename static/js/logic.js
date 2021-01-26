@@ -1,5 +1,4 @@
 
-
 // Navbar Logic
 $(document).ready(function() {
   $("#sidebarCollapse").on("click", function() {
