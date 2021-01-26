@@ -46,11 +46,12 @@ a, a:hover, a:focus {
 }
 
 .line {
-    width: 100%;
-    height: 1px;
-    border-bottom: 1px dashed #ddd;
-    margin: 40px 0;
-}
+    fill: none;
+    stroke-width: 2px;
+  }
+  .green {
+    stroke: green;
+  }
 
 /* ---------------------------------------------------
     SIDEBAR STYLE
