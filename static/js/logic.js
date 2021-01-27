@@ -2,86 +2,90 @@
 // collect all of the categories in one array and
 // and all of the year data and then output for 
 // whatever data is passed
-function outputData(data) {
-  // console.log(data.columns);
-  let categoryColumn = data.columns[0];
+// function outputData(data) {
+//   // console.log(data.columns);
+//   let categoryColumn = data.columns[0];
 
-  for (var i = 0; i < data.length; i++) {
-    yearData = {};
-    let category = data[i][categoryColumn]
+//   for (var i = 0; i < data.length; i++) {
+//     yearData = {};
+//     let category = data[i][categoryColumn]
 
-    // rowData["category"] = category;
+//     // rowData["category"] = category;
 
-    if (category !== "" && category !== "©IMF, 2020") {
-      console.log(category);
-      for (yearIndex = 1990; yearIndex < 2026; yearIndex++) {
-        // console.log(yearIndex);
-        // console.log(data[i][yearIndex])
-        yearData[yearIndex] = data[i][yearIndex];
-      };
-      console.log(yearData)
-    };
-  };
-}
+//     if (category !== "" && category !== "©IMF, 2020") {
+//       console.log(category);
+//       for (yearIndex = 1990; yearIndex < 2026; yearIndex++) {
+//         // console.log(yearIndex);
+//         // console.log(data[i][yearIndex])
+//         yearData[yearIndex] = data[i][yearIndex];
+//       };
+//       console.log(yearData)
+//     };
+//   };
+// }
 
 
-// Load all 4 data files so we can utilze
-d3.queue()
-.defer(d3.csv, "data/imf_lending_borrowing_data_groups.csv")
-.defer(d3.csv, "data/imf_lending_borrowing_data.csv")
-.defer(d3.csv, "data/Expenditure_Data_IMF.csv")
-.defer(d3.csv, "data/Revenue_Data_IMF.csv")
-.await(function(error, lendingBorrowingDataGroups, lendingBorrowingData,expenditureData,revenueData) {
-    if (error) {
-        console.error('Oh dear, something went wrong: ' + error);
-    }
-    else {
-        console.log("imf_lending_borrowing_data_groups.csv");
-        console.log('----------------------------------------------------');
-        outputData(lendingBorrowingDataGroups);
-        console.log("imf_lending_borrowing_data.csv");
-        console.log('----------------------------------------------------');
-        outputData(lendingBorrowingData);
-        console.log("Expenditure_Data_IMF.csvv");
-        console.log('----------------------------------------------------');
-        outputData(expenditureData);
-        console.log("Revenue_Data_IMF.csv");
-        console.log('----------------------------------------------------');
-        outputData(revenueData);
-    }
-});
+// // Load all 4 data files so we can utilze
+// d3.queue()
+// .defer(d3.csv, "data/imf_lending_borrowing_data_groups.csv")
+// .defer(d3.csv, "data/imf_lending_borrowing_data.csv")
+// .defer(d3.csv, "data/Expenditure_Data_IMF.csv")
+// .defer(d3.csv, "data/Revenue_Data_IMF.csv")
+// .await(function(error, lendingBorrowingDataGroups, lendingBorrowingData,expenditureData,revenueData) {
+//     if (error) {
+//         console.error('Oh dear, something went wrong: ' + error);
+//     }
+//     else {
+//         console.log("imf_lending_borrowing_data_groups.csv");
+//         console.log('----------------------------------------------------');
+//         outputData(lendingBorrowingDataGroups);
+//         console.log("imf_lending_borrowing_data.csv");
+//         console.log('----------------------------------------------------');
+//         outputData(lendingBorrowingData);
+//         console.log("Expenditure_Data_IMF.csvv");
+//         console.log('----------------------------------------------------');
+//         outputData(expenditureData);
+//         console.log("Revenue_Data_IMF.csv");
+//         console.log('----------------------------------------------------');
+//         outputData(revenueData);
+//     }
+// });
 
 
 
 // set the dimensions and margins of the graph
+var svgWidth = 1000;
+var svgHeight = 800;
 var margin = {top: 10, right: 20, bottom: 30, left: 50},
-    width = 500 - margin.left - margin.right,
-    height = 420 - margin.top - margin.bottom;
+    chartWidth = svgWidth - margin.left - margin.right,
+    charHeight = svgHeight - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#my_dataviz")
   .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", svgWidth)
+    .attr("height", svgHeight)
   .append("g")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
 //Read the data
-d3.csv("data/Rev_Exp_years_output.csv", function(data) {
+d3.csv("data/Rev_Exp_years_output.csv", function(dataInfo) {
+
+  dataInfo.forEach(function (data){
 
   // Add X axis
-  var x = d3.scaleLinear()
-    .domain([0, 12000])
-    .range([ 0, width ]);
+  var xScale = d3.scaleLinear()
+    .domain(d3.extent(dataInfo, d =>d.))
+    .range([0, chartWidth]);
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
 
   // Add Y axis
-  var y = d3.scaleLinear()
-    .domain([35, 90])
-    .range([ height, 0]);
+  var yScale = d3.scaleLinear()
+    .domain(d3.extent(dataInfo, d =>d.revenue17))
+    .range([chartHeight, 0]);
   svg.append("g")
     .call(d3.axisLeft(y));
 
@@ -92,7 +96,7 @@ d3.csv("data/Rev_Exp_years_output.csv", function(data) {
 
   // Add a scale for bubble color
   var myColor = d3.scaleOrdinal()
-    .domain(["Asia", "Europe", "Americas", "Africa", "Oceania"])
+    .domain(["Country"])
     .range(d3.schemeSet2);
 
   // -1- Create a tooltip div that is hidden by default:
