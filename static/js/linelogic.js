@@ -27,21 +27,6 @@ function drawChart() {
       svgArea.remove();
     }
 
-
-
-  //   // Add y2-axis to the right side of the display
-  //   chartGroup.append("g")
-  //     // Define the color of the axis text
-  //     .classed("blue", true)
-  //     .attr("transform", `translate(${width}, 0)`)
-  //     .call(rightAxis);
-
-  // highLevelCategories.forEach(function(category) {
-  //   let lineData = highLevelCategoriesValues.filter(foundObj => foundObj.Country === category);
-  //   // Line generators for each line
-  //   renderLine(lineData);
-  // });
-   console.log('before setting line info')
   if (chosenYAxis === "advanced") {
     lineCategories = advancedCountries;
     lineValues = advancedCountriesValues
@@ -63,6 +48,10 @@ function drawChart() {
     .attr("width", svgWidth)
     .attr("height", svgHeight);
 
+    var tooltip = d3.select('#line')                               // NEW
+    .append('div')                                                // NEW
+    .attr('class', 'tooltip');    
+
   var chartGroup = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -82,7 +71,7 @@ function drawChart() {
     // Create axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
     bottomAxis.tickValues(d3.range(2016,2021,1));
-    // bottomAxis.tickForamt(d3.format('d'));
+    // bottomAxis.tickFormat(d3.format('d'));
     var leftAxis = d3.axisLeft(yLinearScale);
 
     // Add x-axis
@@ -119,6 +108,16 @@ function drawChart() {
         .data([lineData])
         .attr("d", line)
         .classed("line green", true);
+
+        chartGroup.on('mouseover', function(d) {
+          console.log(d);                          // NEW
+          tooltip.select('.label').html(d.Country);                // NEW
+          tooltip.style('display', 'block');                          // NEW
+        });                                                           // NEW
+
+        chartGroup.on('mouseout', function() {                              // NEW
+          tooltip.style('display', 'none');                           // NEW
+        });   
     }
   );
     
