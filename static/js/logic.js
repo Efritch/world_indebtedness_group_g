@@ -58,7 +58,7 @@ var svgWidth = 1000;
 var svgHeight = 800;
 var margin = {top: 10, right: 20, bottom: 30, left: 50},
     chartWidth = svgWidth - margin.left - margin.right,
-    charHeight = svgHeight - margin.top - margin.bottom;
+    chartHeight = svgHeight - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#my_dataviz")
@@ -67,41 +67,54 @@ var svg = d3.select("#my_dataviz")
     .attr("height", svgHeight)
   .append("g")
     .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+          `translate(${margin.left}, ${margin.top})`);
 
 //Read the data
-d3.csv("data/Rev_Exp_years_output.csv", function(dataInfo) {
+d3.csv("data/Revenue_Expenditure_data.csv", function(dataInfo) {
 
   dataInfo.forEach(function (data){
 
   // Add X axis
   var xScale = d3.scaleLinear()
-    .domain(d3.extent(dataInfo, d =>d.))
+    .domain(d3.extent(dataInfo, d =>d.Expenditure))
     .range([0, chartWidth]);
   svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x));
+    .attr("transform", `translate(0, ${chartHeight})`)
+    .call(d3.axisBottom(xScale))
+    .append("text")
+    .text("Expenditure")
+    .attr("transform", `translate(${chartWidth/2}, 30)`)
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "30px")
+    .attr("color", "black");
+
 
   // Add Y axis
   var yScale = d3.scaleLinear()
-    .domain(d3.extent(dataInfo, d =>d.revenue17))
+    .domain(d3.extent(dataInfo, d =>d.Revenue))
     .range([chartHeight, 0]);
   svg.append("g")
-    .call(d3.axisLeft(y));
+    .call(d3.axisLeft(yScale))
+    .append("text")
+    .text("Revenue")
+    .attr("transform", `translate(${chartHeight/2}, 10)`)
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "30px")
+    .attr("color", "black");
 
   // Add a scale for bubble size
-  var z = d3.scaleLinear()
-    .domain([200000, 1310000000])
-    .range([ 4, 40]);
+  // var z = d3.scaleLinear()
+  //   .domain([200000, 1310000000])
+  //   .range([ 4, 40]);
 
   // Add a scale for bubble color
-  var myColor = d3.scaleOrdinal()
-    .domain(["Country"])
-    .range(d3.schemeSet2);
+  // var myColor = d3.scaleOrdinal()
+  //   .domain(["Country"])
+  //   .range(d3.schemeSet2);
 
   // -1- Create a tooltip div that is hidden by default:
-  var tooltip = d3.select("#my_dataviz")
-    .append("div")
+  var tooltip = d3.select("#my-dataviz")
+      .append("div")
       .style("opacity", 0)
       .attr("class", "tooltip")
       .style("background-color", "black")
@@ -132,20 +145,53 @@ d3.csv("data/Rev_Exp_years_output.csv", function(dataInfo) {
       .style("opacity", 0)
   }
 
+  var myColor = function(value) {
+    if (value = "") {  
+      fill = 'grey';
+  } else if ( value < 15) {  
+      fill = 'grey';
+  } else if (value => 15 && value < 30) {  
+      fill = 'yellow';
+  } else if (value => 30 && value < 40) {  
+      fill = 'orange';
+  } else if (value =>40 && value < 50) {  
+      fill = 'red';
+  }
+  else if (value =>50) {  
+    fill = 'purple';
+  }
+  }
+
   // Add dots
   svg.append('g')
     .selectAll("dot")
-    .data(data)
+    .data(dataInfo)
     .enter()
     .append("circle")
-      .attr("class", "bubbles")
-      .attr("cx", function (d) { return x(d.gdpPercap); } )
-      .attr("cy", function (d) { return y(d.lifeExp); } )
-      .attr("r", function (d) { return z(d.pop); } )
-      .style("fill", function (d) { return myColor(d.continent); } )
-    // -3- Trigger the functions
-    .on("mouseover", showTooltip )
-    .on("mousemove", moveTooltip )
-    .on("mouseleave", hideTooltip )
+    .attr("class", "bubbles")
+    .attr("cx", function (d) { return xScale(d.Expenditure.round(2)); } )
+    .attr("cy", function (d) { return yScale(d.Revenue.round(2)); } )
+    .attr("r", function (d) { return Math.log(d.Expenditure.round(2));})
+    .style("fill", myColor(this))
+    .append("text")
+    .text(function(d) {
+      return `${d.Country}`;
+    })
+    .attr("dx", function(d) {           
+        return xScale(d.Expenditure);
+    })
+    .attr("text-anchor", "middle")
+    .attr("dy", function(d) {
+        return yScale(d.Revenue);
+    })
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "10px")
+    .attr("fill", "red")
+
+  // -3- Trigger the functions
+  .on("mouseover", showTooltip )
+  .on("mousemove", moveTooltip )
+  .on("mouseleave", hideTooltip )
 
   })
+});

@@ -23,10 +23,9 @@ db_name = "world_indebtedness"
 uri = f"mongodb://web_user:Uj3z9lLuFWfxoOfZ@projectcluster.2m1ao.mongodb.net/{db_name}?retryWrites=true&w=majority"
 mongo = MongoClient(uri)
 rev_exp_col = mongo.db.rev_exp
-#print(revenue_expenditure_col)
 
-rev_exp = pd.read_csv("data/Rev_Exp_years_output.csv", encoding="utf-8")
-# rev_exp["Year"]astype("str", copy=False)
+rev_exp = pd.read_csv("data/Revenue_Expenditure_data.csv", encoding="utf-8")
+rev_exp["Year"]astype("str", copy=False)
 for record in rev_exp.to_dict("records"):
     new_record = {}
     for key, value in record.items():
