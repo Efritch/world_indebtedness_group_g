@@ -8,18 +8,260 @@ function yScale(chartData, height) {
     .range([height, 0]);
   return yLinearScale;
   }
+  
+function drawChart() {
+  // Chart Params
+  var svgWidth = 960;
+  var svgHeight = 500;
 
-function renderLine(lineData) {
-  var line = d3.line()
-    .x(d => xLinearScale(d.Year))
-    .y(d => yLinearScale(d.Value));
+  var margin = { top: 20, right: 40, bottom: 60, left: 150 };
 
-  // Append a path for line1
-  chartGroup.append("path")
-    .data([lineData])
-    .attr("d", line)
-    .classed("line green", true);
-}
+  var width = svgWidth - margin.left - margin.right;
+  var height = svgHeight - margin.top - margin.bottom;
+
+    // Define the svgArea
+    var svgArea = d3.select("body").select("svg");
+  
+    // clear svg is not empty
+    if (!svgArea.empty()) {
+      svgArea.remove();
+    }
+
+
+
+  //   // Add y2-axis to the right side of the display
+  //   chartGroup.append("g")
+  //     // Define the color of the axis text
+  //     .classed("blue", true)
+  //     .attr("transform", `translate(${width}, 0)`)
+  //     .call(rightAxis);
+
+  // highLevelCategories.forEach(function(category) {
+  //   let lineData = highLevelCategoriesValues.filter(foundObj => foundObj.Country === category);
+  //   // Line generators for each line
+  //   renderLine(lineData);
+  // });
+   console.log('before setting line info')
+  if (chosenYAxis === "advanced") {
+    lineCategories = advancedCountries;
+    lineValues = advancedCountriesValues
+  } else if (chosenYAxis === "emerging") {
+    lineCategories = emergingCountries;
+    lineValues = emergingCountriesValues
+  } else if (chosenYAxis === "low") {
+    lineCategories = lowCountries;
+    lineValues = lowCountriesValues;
+  } else {
+    lineCategories = groupCategories;
+    lineValues = groupCategoriesValues;
+  }
+
+  // Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
+  var svg = d3
+    .select("#line")
+    .append("svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight);
+
+  var chartGroup = svg.append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+
+
+    
+    // Create scaling functions
+    var xLinearScale = d3.scaleLinear()
+      .domain([2017, 2020])
+      .range([0, width]);
+    
+            
+      // Update x scale for new data
+    var yLinearScale = yScale(lineValues,height);
+
+
+    // Create axis functions
+    var bottomAxis = d3.axisBottom(xLinearScale);
+    bottomAxis.tickValues(d3.range(2016,2021,1));
+    // bottomAxis.tickForamt(d3.format('d'));
+    var leftAxis = d3.axisLeft(yLinearScale);
+
+    // Add x-axis
+    chartGroup.append("g")
+      .attr("transform", `translate(0, ${height})`)
+      .call(bottomAxis);
+
+    // Add y-axis to the left side of the display
+    chartGroup.append("g")
+      // Define the color of the axis text
+      .classed("green", true)
+      .call(leftAxis);
+
+
+
+
+  console.log('doingline');
+  console.log('--------------------------------------');
+  console.log(lineCategories);
+  console.log(lineValues);
+  console.log(chosenYAxis);
+  // Draw lines
+  lineCategories.forEach(function(category) {
+    console.log(category);
+    let lineData = lineValues.filter(foundObj => foundObj.Country === category);
+    console.log(lineData);
+
+    var line = d3.line()
+        .x(d => xLinearScale(d.Year))
+        .y(d => yLinearScale(d.Value));
+    
+      // Append a path for line1
+      chartGroup.append("path")
+        .data([lineData])
+        .attr("d", line)
+        .classed("line green", true);
+    }
+  );
+    
+  // Create group for two y-axis labels
+  var yLabelsGroup = chartGroup.append("g")
+    .attr("transform", "rotate(-90)");
+
+
+  // Create the advanced countries label
+  var advancedLabel = yLabelsGroup.append("text")
+    .attr("x", 0 - (height/2))
+    .attr("y", -100)
+    .attr("value", "advanced") // value to grab for event listener
+    .classed("active", false)
+    .classed("inactive", true)
+    .text("Advanced economies");
+
+  // Create the emerging markets label
+  var emergingLabel = yLabelsGroup.append("text")
+    .attr("x", 0 - (height/2))
+    .attr("y", -80)
+    .attr("value", "emerging") // value to grab for event listener
+    .classed("active", false)
+    .classed("inactive", true)        
+    .text("Emerging Market");
+
+  // Create the low income label
+  var lowLabel = yLabelsGroup.append("text")
+    .attr("x", 0 - (height/2))
+    .attr("y", -60)
+    .attr("value", "low") // value to grab for event listener
+    .classed("active", false)
+    .classed("inactive", true)        
+    .text("Low-Income");
+
+  // Create the highlevel groups label
+  var groupsLabel = yLabelsGroup.append("text")
+    .attr("x", 0 - (height/2))
+    .attr("y", -40)
+    .attr("value", "groups") // value to grab for event listener
+    .classed("active", false)
+    .classed("inactive", true)        
+    .text("Advanced / Emerging / Low Income");
+
+  // Change the chosenYAxis to active and not inactive
+  if (chosenYAxis === "advanced") {
+  advancedLabel
+    .classed("active", true)
+    .classed("inactive", false);
+  } else if (chosenYAxis === "emerging") {
+    emergingLabel
+      .classed("active", true)
+      .classed("inactive", false);
+  } else if (chosenYAxis === "low") {
+    lowLabel
+      .classed("active", true)
+      .classed("inactive", false);
+  } else {
+    groupsLabel
+      .classed("active", true)
+      .classed("inactive", false);
+  }
+
+  // append x axis
+  chartGroup.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + 20})`)
+    .attr("y", 20)
+    .attr("x", -80)
+    .attr("dx", "1em")
+    .classed("axis-text", true)
+    .text("Years (2017-2020)");
+
+
+  axis = yLabelsGroup.selectAll("text");
+  axis.on("click", function() {
+    // Get value of selection
+    console.log('hello');
+    var yValue = d3.select(this).attr("value");
+
+    if (yValue !== chosenYAxis) {
+  
+      // Replace chosenXAxis with value
+      chosenYAxis = yValue;
+      drawChart();
+      
+      // Change classes to change bold text
+      if (chosenYAxis === "advanced") {
+          advancedLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          emergingLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          lowLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          groupsLabel
+            .classed("active", false)
+            .classed("inactive", true);          
+        } else if (chosenYAxis === "emerging") {
+          emergingLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          advancedLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          lowLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          groupsLabel
+            .classed("active", false)
+            .classed("inactive", true);              
+        } else if (chosenYAxis === "low") { 
+          lowLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          advancedLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          emergingLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          groupsLabel
+            .classed("active", false)
+            .classed("inactive", true);             
+        } else {
+          groupsLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          advancedLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          emergingLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          lowLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        } 
+      }           
+    });
+  }
+
 
 // Navbar Logic
 $(document).ready(function() {
@@ -4798,12 +5040,15 @@ let lendingBorrowingData = [
   }
  ]
 
-
+//###################################################################
+// Organize the data
+//###################################################################
 
 // Only deal with years 2017 - 2020
  let lendingBorrowingYearData = lendingBorrowingData.filter(function(data) {
   return data.Year === 2017 || data.Year === 2018  || data.Year === 2019  || data.Year === 2020 ;
 })
+console.log('hello there');
 
 let groupCategoriesValues = [];
 groupCategories.forEach(function(category) {
@@ -4885,259 +5130,13 @@ lowCountriesValues.forEach(function(data) {
   data.Value = +data.Value;
 });
 
-// console.log('after setting');
-// console.log(advancedLineData);
-// Chart Params
-var svgWidth = 960;
-var svgHeight = 500;
 
-var margin = { top: 20, right: 40, bottom: 60, left: 50 };
+//###################################################################
+// Define our main variables
+//###################################################################
 
-var width = svgWidth - margin.left - margin.right;
-var height = svgHeight - margin.top - margin.bottom;
+var chosenYAxis = "advanced"
+var lineValues;
+var lineCategories;
 
-  // Define the svgArea
-  var svgArea = d3.select("body").select("svg");
- 
-  // clear svg is not empty
-  if (!svgArea.empty()) {
-    svgArea.remove();
-  }
-
-// Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
-var svg = d3
-  .select("#line")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight);
-
-var chartGroup = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-  var chosenYAxis = "advanced"
-
-  
-  // Create scaling functions
-  var xLinearScale = d3.scaleLinear()
-    .domain([2017, 2020])
-    .range([0, width]);
-          
-    // Update x scale for new data
-  var yLinearScale = yScale(advancedCountriesValues,height);
-
-
-  // Create axis functions
-  var bottomAxis = d3.axisBottom(xLinearScale)
-  var leftAxis = d3.axisLeft(yLinearScale);
-
-  // Add x-axis
-  chartGroup.append("g")
-    .attr("transform", `translate(0, ${height})`)
-    .call(bottomAxis);
-
-  // Add y-axis to the left side of the display
-  chartGroup.append("g")
-    // Define the color of the axis text
-    .classed("green", true)
-    .call(leftAxis);
-
-//   // Add y2-axis to the right side of the display
-//   chartGroup.append("g")
-//     // Define the color of the axis text
-//     .classed("blue", true)
-//     .attr("transform", `translate(${width}, 0)`)
-//     .call(rightAxis);
-
-// highLevelCategories.forEach(function(category) {
-//   let lineData = highLevelCategoriesValues.filter(foundObj => foundObj.Country === category);
-//   // Line generators for each line
-//   renderLine(lineData);
-// });
-
-
-
-
-
-advancedCountries.forEach(function(country) {
-  console.log(country);
-  let lineData = advancedCountriesValues.filter(foundObj => foundObj.Country === country);
-  console.log(lineData);
-  // Line generators for each line
-  renderLine(lineData);
-});
-  
-// Create group for two y-axis labels
-var yLabelsGroup = chartGroup.append("g")
-.attr("transform", "rotate(-90)");
-
-
-// Create the obesity label
-var advancedLabel = yLabelsGroup.append("text")
-.attr("x", 0 - (height/2)-100)
-.attr("y", -40)
-.attr("value", "advanced") // value to grab for event listener
-.classed("active", false)
-.classed("inactive", true)
-.text("Advanced economies");
-
-// Create the Smokes label
-var emergingLabel = yLabelsGroup.append("text")
-.attr("x", 0 - (height/2)-100)
-.attr("y", -30)
-.attr("value", "emerging") // value to grab for event listener
-.classed("active", false)
-.classed("inactive", true)        
-.text("Emerging Market");
-
-// Create the healthcare label
-var lowLabel = yLabelsGroup.append("text")
-.attr("x", 0 - (height/2)-100)
-.attr("y", -20)
-.attr("value", "low") // value to grab for event listener
-.classed("active", false)
-.classed("inactive", true)        
-.text("Low-Income");
-
-// Create the healthcare label
-var groupsLabel = yLabelsGroup.append("text")
-.attr("x", 0 - (height/2)-100)
-.attr("y", -10)
-.attr("value", "groups") // value to grab for event listener
-.classed("active", false)
-.classed("inactive", true)        
-.text("Advanced / Emerging / Low Income");
-
-// Change the chosenXAxis to active and not inactive
-if (chosenYAxis === "advanced") {
-advancedLabel
-  .classed("active", true)
-  .classed("inactive", false);
-} else if (chosenYAxis === "emerging") {
-  emergingLabel
-    .classed("active", true)
-    .classed("inactive", false);
-} else if (chosenYAxis === "low") {
-  lowLabel
-    .classed("active", true)
-    .classed("inactive", false);
-} else {
-  groupsLabel
-    .classed("active", true)
-    .classed("inactive", false);
-}
-
-// append x axis
-chartGroup.append("text")
-  .attr("transform", `translate(${width / 2}, ${height + 20})`)
-  .attr("y", 20)
-  .attr("x", 10)
-  .attr("dx", "1em")
-  .classed("axis-text", true)
-  .text("Years (2017-220)");
-
-
-var lineData;
-axis = yLabelsGroup.selectAll("text");
-axis.on("click", function() {
-  // Get value of selection
-  console.log('hello');
-  var yValue = d3.select(this).attr("value");
-
-  if (yValue !== chosenYAxis) {
- 
-    // Replace chosenXAxis with value
-    chosenYAxis = yValue;
-
-    if (chosenYAxis === "advanced") {
-      advancedCountries.forEach(function(country) {
-        console.log('event')
-        console.log(country);
-        lineData = advancedCountriesValues.filter(foundObj => foundObj.Country === country);
-        console.log(lineData);
-      });
-    } else if (chosenYAxis === "emerging") {
-      emergingCountries.forEach(function(country) {
-        console.log('event')
-        console.log(country);
-        lineData = emergingCountriesValues.filter(foundObj => foundObj.Country === country);
-        console.log(lineData);
-      });
-    } else if (chosenYAxis === "low") {
-      lowCountries.forEach(function(country) {
-        console.log('event')
-        console.log(country);
-        lineData = lowCountriesValues.filter(foundObj => foundObj.Country === country);
-        console.log(lineData);
-      });
-    } else {
-      groupCategories.forEach(function(country) {
-        console.log('event')
-        console.log(country);
-        lineData = groupCategoriesValues.filter(foundObj => foundObj.Country === country);
-        console.log(lineData);
-      });
-    }
-   }
-
-
-    
-    // Update x scale for new data
-    yLinearScale = yScale(lineData, height);
-
-    renderLine(lineData);
-    
-    // Change classes to change bold text
-    if (chosenYAxis === "advanced") {
-        advancedLabel
-          .classed("active", true)
-          .classed("inactive", false);
-        emergingLabel
-          .classed("active", false)
-          .classed("inactive", true);
-        lowLabel
-          .classed("active", false)
-          .classed("inactive", true);
-        groupsLabel
-          .classed("active", false)
-          .classed("inactive", true);          
-      } else if (chosenYAxis === "emerging") {
-        emergingLabel
-          .classed("active", true)
-          .classed("inactive", false);
-        advancedLabel
-          .classed("active", false)
-          .classed("inactive", true);
-        lowLabel
-          .classed("active", false)
-          .classed("inactive", true);
-        groupsLabel
-          .classed("active", false)
-          .classed("inactive", true);              
-      } else if (chosenYAxis === "low") { 
-        lowLabel
-          .classed("active", true)
-          .classed("inactive", false);
-        advancedLabel
-          .classed("active", false)
-          .classed("inactive", true);
-        emergingLabel
-          .classed("active", false)
-          .classed("inactive", true);
-        groupsLabel
-          .classed("active", false)
-          .classed("inactive", true);             
-      } else {
-        groupsLabel
-          .classed("active", true)
-          .classed("inactive", false);
-        advancedLabel
-          .classed("active", false)
-          .classed("inactive", true);
-        emergingLabel
-          .classed("active", false)
-          .classed("inactive", true);
-        lowLabel
-          .classed("active", false)
-          .classed("inactive", true);
-      }            
-    });
+drawChart();
