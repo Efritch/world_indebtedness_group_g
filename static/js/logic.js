@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 
 // Navbar Logic
@@ -8,7 +7,7 @@ $(document).ready(function() {
     $(this).toggleClass("active");
   });
 });
-=======
+
 // Loop through the lending borrowing data groups
 // collect all of the categories in one array and
 // and all of the year data and then output for 
@@ -61,7 +60,7 @@ $(document).ready(function() {
 //         outputData(revenueData);
 //     }
 // });
->>>>>>> 80c7efc6bdc4a7a7718bdeaf19354385522a9319
+
 
 //     if (category !== "" && category !== "©IMF, 2020") {
 //       console.log(category);
@@ -219,7 +218,7 @@ d3.csv("data/Revenue_Expenditure_data.csv", function(dataInfo) {
     .data(dataInfo)
     .enter()
     .append("circle")
-<<<<<<< HEAD
+
       .attr("class", "bubbles")
       .attr("cx", function (d) { return x(d.gdpPercap); } )
       .attr("cy", function (d) { return y(d.lifeExp); } )
@@ -232,8 +231,9 @@ d3.csv("data/Revenue_Expenditure_data.csv", function(dataInfo) {
 
   })
 // var someJavaScriptVar = '{{ db_data[0]}}';
+
 // console.log(someJavaScriptVar);
-=======
+
     .attr("class", "bubbles")
     .attr("cx", function (d) { return xScale(d.Expenditure.round(2)); } )
     .attr("cy", function (d) { return yScale(d.Revenue.round(2)); } )
@@ -261,4 +261,7 @@ d3.csv("data/Revenue_Expenditure_data.csv", function(dataInfo) {
 
   })
 });
->>>>>>> 80c7efc6bdc4a7a7718bdeaf19354385522a9319
+
+=======
+// console.log(someJavaScriptVar);
+
