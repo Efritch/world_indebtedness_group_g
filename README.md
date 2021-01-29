@@ -20,9 +20,13 @@ This view shows a world map showing the Net lending/borrowing value for each cou
 ## World Indebtedness Line Chart
 This view shows an interactive line chart with multiple Y Axis points.   A chart can be created for the following:
 * Advanced Economy Countries
+![Advanced](images/Advanced_Economies_Line.jpg)
 * Emerging Market Countries
+![Emerging](images/Emerging_Market_line.jpg)
 * Low-Income countries
+![Low](images/Low_Income_Line.jpg)
 * A grouping of all of the three categories together each as an individual line.
+![Groups](images/Group_Line.jpg)
 
 
 ## Revenue Expenditure Scatter Plot
