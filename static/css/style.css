@@ -1,8 +1,20 @@
+.tooltip {
+    display: none;
+    position: absolute;
+    width: 80px;
+    height: 30px;
+    padding: 2px;
+    font: 12px sans-serif;
+    text-align: center;
+    background: orange;
+    border: 0;
+    border-radius: 10px;
+}
 .bubbles {
     stroke-width: 2px;
-    stroke: white;
+    stroke: blue;
 }
-.bubbles:hover {
+.button:hover {
     stroke: black;
 }
 #scatterplot button {

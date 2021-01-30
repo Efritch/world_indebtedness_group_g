@@ -10,7 +10,7 @@ Sirine Khelifi
 Beverly Thompson
 
 # Overview
-This project explores data from the Internation Montitery Fund that includes expendtures, revenues and a combination of the two for countries throughout the years.   This project is exploring specifically the data from years 2017 - 2020.
+This project explores data from the International Monitary Fund that includes expenditures, revenues and a combination of the two for countries throughout the years.   This project is exploring specifically the data from years 2017 - 2020.
 
 The data is explored utilzing Python, Flask, Pandas, MongoDB Atlas, HTML, CSS and Javascript.
 
@@ -30,4 +30,6 @@ This view shows an interactive line chart with multiple Y Axis points.   A chart
 
 
 ## Revenue Expenditure Scatter Plot
-This view shows a scatter plot with one axis being expenditures and one axis being Revenue.
+This view shows a scatter plot with one axis being Expenditure  as a % of GDP and one axis being Revenue also as % of GDP. Toggle buttons were created to switch between the years 2017-2020. 
+![Scatter](images/Scatter_Plot.PNG)
+
