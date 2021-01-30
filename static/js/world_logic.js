@@ -14,9 +14,9 @@ var myMap = L.map("map", {
   }).addTo(myMap);
 
 // Use this link to get the geojson data.
-var link = "imf_lending_borrowing_world_data.geojson";
+// var link = "imf_lending_borrowing_world_data.geojson";
 
-var link = [
+var worldData = [
   {
     "type": "FeatureCollection",
     "features": [
@@ -5279,7 +5279,7 @@ var mapStyle = {
 var world_data_2020
 
 // Grabbing our GeoJSON data..
-d3.json(link, function(worldData) {
+//d3.json(link, function(worldData) {
 
 //    world_data_2020 = L.choropleth(data, {
 
@@ -5297,4 +5297,3 @@ d3.json(link, function(worldData) {
   }).addTo(myMap);
 
 //console.log(worldData)
-});

@@ -1,5 +1,5 @@
 // Create world map object
-var worldMap = L.map("map-id", {
+var worldMap = L.map("map", {
     center: [15.5994, -28.6731],
     zoom: 3
   });
