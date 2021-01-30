@@ -1,4 +1,4 @@
-// Navbar Logic
+//Navbar Logic
 // $(document).ready(function() {
 //   $("#sidebarCollapse").on("click", function() {
 //     $("#sidebar").toggleClass("active");
@@ -8,8 +8,8 @@
 
 // set the dimensions and margins of the graph
 var svgWidth = 1200;
-var svgHeight = 1000;
-var margin = {top: 400, right: 100, bottom: 80, left: 200},
+var svgHeight = 750;
+var margin = {top: 100, right: 100, bottom: 200, left: 200},
     chartWidth = svgWidth - margin.left - margin.right,
     chartHeight = svgHeight - margin.top - margin.bottom;
 
@@ -63,37 +63,45 @@ function loadScatterplot(Year) {
       .text("Revenue");
     
     // -1- Create a tooltip div that is hidden by default:
-    var tooltip = d3.select("#my-dataviz")
-        .append("div")
-        .style("opacity", 0)
-        .attr("class", "tooltip")
-        .style("background-color", "black")
-        .style("border-radius", "5px")
-        .style("padding", "10px")
-        .style("color", "white")
+    // var toolTip = d3.tip()
+    //     .attr("class", "tooltip")
+    //     .offset([80,-60])
+    //     .html("Country: " + d.Country + d.Revenue + d.Expenditure);
 
-    // -2- Create 3 functions to show / update (when mouse move but stay on same circle) / hide the tooltip
-    var showTooltip = function(d) {
-      tooltip
-        .transition()
-        .duration(200)
-      tooltip
-        .style("opacity", 1)
-        .html("Country: " + d.Country + d.Revenue + d.Expenditure)
-        .style("left", (d3.mouse(this)[0]+30) + "px")
-        .style("top", (d3.mouse(this)[1]+30) + "px")
-    }
-    var moveTooltip = function(d) {
-      tooltip
-        .style("left", (d3.mouse(this)[0]+30) + "px")
-        .style("top", (d3.mouse(this)[1]+30) + "px")
-    }
-    var hideTooltip = function(d) {
-      tooltip
-        .transition()
-        .duration(200)
-        .style("opacity", 0)
-    }
+    // svg.call(toolTip);
+
+    // circleGroup.on("mouseover", d => toolTip.show(d,this));
+    // circleGroup.on("mouseout", d =>toolTip.hide(d));
+
+    //     .style("opacity", 0)
+    //     .attr("class", "tooltip")
+    //     .style("background-color", "black")
+    //     .style("border-radius", "5px")
+    //     .style("padding", "10px")
+    //     .style("color", "white")
+
+    // // -2- Create 3 functions to show / update (when mouse move but stay on same circle) / hide the tooltip
+    // var showTooltip = function(d) {
+    //   tooltip
+    //     .transition()
+    //     .duration(200)
+    //   tooltip
+    //     .style("opacity", 1)
+    //     .html("Country: " + d.Country + d.Revenue + d.Expenditure)
+    //     .style("left", (d3.mouse(this)[0]+30) + "px")
+    //     .style("top", (d3.mouse(this)[1]+30) + "px")
+    // }
+    // var moveTooltip = function(d) {
+    //   tooltip
+    //     .style("left", (d3.mouse(this)[0]+30) + "px")
+    //     .style("top", (d3.mouse(this)[1]+30) + "px")
+    // }
+    // var hideTooltip = function(d) {
+    //   tooltip
+    //     .transition()
+    //     .duration(200)
+    //     .style("opacity", 0)
+    // }
 
     var myColor = function(value) {
       if (value = "") {  
@@ -116,7 +124,7 @@ function loadScatterplot(Year) {
     //var data20 = data.filter(d => d.Year==yearSwitcher.currentYear);
     var yearData = data.filter(d => d.Year==Year);
     // Add circles
-    svg.append("g")
+    circleGroup = svg.append("g")
       .attr("id", "circles")
       .selectAll("circle")
       .attr("transform", `translate(${chartHeight}, ${chartWidth})`)
@@ -130,7 +138,7 @@ function loadScatterplot(Year) {
       .attr("r", 10)
       .attr("stroke", "black")
       .style("fill", "blue")
-      //.style("fill", myColor(this))
+      //.style("fill", myColor())
       .append("text")
       .text(function(d) {
         return `${d.Country}`;
@@ -144,17 +152,41 @@ function loadScatterplot(Year) {
       })
       .attr("font-family", "sans-serif")
       .attr("font-size", "10px")
-      .style("fill", "red");
+      .style("fill", "black");
+    svg.append("text")
+      .attr("transform","translate(" + chartWidth/2 + ",0)")
+      .style("text-anchor","middle")
+      .attr("font-size", "30px")
+      .text("The World's Expenditure vs Revenue in "+currentYear)
+      .classed("title",true);
+      
+      //-1- Create a tooltip div that is hidden by default:
+    var toolTip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip");
+    circleGroup.on("mouseover", function(yearData){
+      toolTip.style("display", "block");
+      toolTip.html(`Country:<strong>${d.country}`)
+        .style("left", d3.event.pageX + "px")
+        .style("top", d3.event.pageY + "px");
+    })
+    .on("mouseout", function() {
+      toolTip.style("display", "none");
+    });
+
+        // .offset([80,-60])
+        // .html("Country: " + d.Country + d.Revenue + d.Expenditure);
+  
+      // svg.call(toolTip);
+  
+      // circleGroup.on("mouseover", d => toolTip.show(d,this));
+      // circleGroup.on("mouseout", d =>toolTip.hide(d));
+
+         
       // .on("mouseover", showTooltip )
       // .on("mousemove", moveTooltip )
       // .on("mouseleave", hideTooltip )
-
-    //Text for the title of the plot
-    svg.append("text")
-    .attr("transform","translate(" + chartWidth/2 + ",0)")
-    .style("text-anchor","middle")
-    .text("The World's Expenditure vs Revenue in "+currentYear)
-    .classed("title",true);
+         
   })};
     ////////////////////////////////////On click update with new data////////////////////////////////////
   
@@ -162,32 +194,6 @@ d3.selectAll("button").on("click", function(){
         currentYear = d3.select(this).text()
         // console.log(currentYear);
         loadScatterplot(currentYear);
-        // yearSwitcher = new yearSwitcherConstructor(currentYear);
-        //   //Update all circles
-        //   svg.selectAll("circle")
-        //   .data(data)
-        //   .transition()
-        //   .duration(1000)    
-        //   .attr("cx", function(d) {
-        //     return xScale(+d[yearSwitcher.Expenditure]);
-        //   })
-        //   .attr("cy", function(d) {
-        //     return yScale(+d[yearSwitcher.Revenue]);
-        //   })
-        //   //Update label's position
-        //   svg.selectAll("text")
-        //   .data(data)
-        //   .transition()
-        //   .duration(1000)
-        //   .attr("dx", function(d) {
-        //     return xScale(+d[yearSwitcher.Expenditure]);
-        //   })
-        //   .attr("dy", function(d) {
-        //     return yScale(+d[yearSwitcher.Revenue]);
-        //   });
-        //   //Update title
-        //   svg.selectAll(".title")
-        //   .text("The World's Expenditure vs Revenue in "+currentYear);
         });
       
     loadScatterplot(2020);
