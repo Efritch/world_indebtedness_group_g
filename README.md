@@ -35,4 +35,7 @@ The high-level group chart is in line with each individual chart.  That is at th
 ## Revenue Expenditure Scatter Plot
 This view shows a scatter plot with one axis being Expenditure  as a % of GDP and one axis being Revenue also as % of GDP. Toggle buttons were created to switch between the years 2017-2020. 
 ![Scatter](images/Scatter_Plot.PNG)
+The pandemic of 2020 has effected the world's economy and the scatter plot shows the trend of the world's economy by looking at Expenditure and Revenue as % of GDP. 2020 shows that all countries' Expenditure increased vs the Revenue leading to an increased Debt. 
+
+The advanced economies showed a larger dip in debt compared to low-income and low-income and emerging economies. 
 
