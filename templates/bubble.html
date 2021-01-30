@@ -17,10 +17,10 @@
 
 <body>
 
-  <!-- {% include 'navbar.html'%} -->
+  {% include 'navbar.html'%}
 
   <!-- The div that holds our plot -->
-  <div id="scatterplot"></div>
+  <div id="scatterplot" class= "toolTip button:hover"></div>
       <p>
         Click on the Year to visualize the data: <button>2017</button>  <button>2018</button> <button>2019</button> <button>2020</button> 
       </p>
@@ -41,6 +41,8 @@
   <script type="text/javascript" src="static/js/logic.js"></script>
   <!-- Load color scale -->
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <!-- Load Tool Tip-->
+  <script src="https://cdnjs.cloudfare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
 </body>
 
 </html>
