@@ -1,4 +1,4 @@
-An Anaysis of World Indebtedness - 2017 to 2020
+An Analysis of World Indebtedness - 2017 to 2020
 
 Group Members:
 Sirine Khelifi
