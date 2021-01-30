@@ -31,4 +31,6 @@ This view shows an interactive line chart with multiple Y Axis points.   A chart
 
 ## Revenue Expenditure Scatter Plot
 This view shows a scatter plot with one axis being Expenditure  as a % of GDP and one axis being Revenue also as % of GDP. Toggle buttons were created to switch between the years 2017-2020. 
+(images/Scatter_Plot.png)
+
 
