@@ -1,112 +1,37 @@
-function yearSwitcherConstructor(year) {
-  this.currentYear = year;
-  this.Revenue = "Revenue" + year;
-  this.Expenditure = "Expenditure" + year;
-  }
-
-
 // Navbar Logic
-$(document).ready(function() {
-  $("#sidebarCollapse").on("click", function() {
-    $("#sidebar").toggleClass("active");
-    $(this).toggleClass("active");
-  });
-});
-
-// Loop through the lending borrowing data groups
-// collect all of the categories in one array and
-// and all of the year data and then output for 
-// whatever data is passed
-// function outputData(data) {
-//   // console.log(data.columns);
-//   let categoryColumn = data.columns[0];
-
-//   for (var i = 0; i < data.length; i++) {
-//     yearData = {};
-//     let category = data[i][categoryColumn]
-
-//     // rowData["category"] = category;
-
-//     if (category !== "" && category !== "©IMF, 2020") {
-//       console.log(category);
-//       for (yearIndex = 1990; yearIndex < 2026; yearIndex++) {
-//         // console.log(yearIndex);
-//         // console.log(data[i][yearIndex])
-//         yearData[yearIndex] = data[i][yearIndex];
-//       };
-//       console.log(yearData)
-//     };
-//   };
-// }
-
-
-//Load default 2020 data
-currentYear = "2020";
-var yearSwitcher = new yearSwitcherConstructor(currentYear);
-//console.log(yearSwitcher);
-
-
-//     if (category !== "" && category !== "©IMF, 2020") {
-//       console.log(category);
-//       for (yearIndex = 1990; yearIndex < 2026; yearIndex++) {
-//         // console.log(yearIndex);
-//         // console.log(data[i][yearIndex])
-//         yearData[yearIndex] = data[i][yearIndex];
-//       };
-//       console.log(yearData)
-//     };
-//   };
-// }
-
-
-// // Load all 4 data files so we can utilze
-// d3.queue()
-// .defer(d3.csv, "data/imf_lending_borrowing_data_groups.csv")
-// .defer(d3.csv, "data/imf_lending_borrowing_data.csv")
-// .defer(d3.csv, "data/Expenditure_Data_IMF.csv")
-// .defer(d3.csv, "data/Revenue_Data_IMF.csv")
-// .await(function(error, lendingBorrowingDataGroups, lendingBorrowingData,expenditureData,revenueData) {
-//     if (error) {
-//         console.error('Oh dear, something went wrong: ' + error);
-//     }
-//     else {
-//         console.log("imf_lending_borrowing_data_groups.csv");
-//         console.log('----------------------------------------------------');
-//         outputData(lendingBorrowingDataGroups);
-//         console.log("imf_lending_borrowing_data.csv");
-//         console.log('----------------------------------------------------');
-//         outputData(lendingBorrowingData);
-//         console.log("Expenditure_Data_IMF.csvv");
-//         console.log('----------------------------------------------------');
-//         outputData(expenditureData);
-//         console.log("Revenue_Data_IMF.csv");
-//         console.log('----------------------------------------------------');
-//         outputData(revenueData);
-//     }
+// $(document).ready(function() {
+//   $("#sidebarCollapse").on("click", function() {
+//     $("#sidebar").toggleClass("active");
+//     $(this).toggleClass("active");
+//   });
 // });
 
-
-
 // set the dimensions and margins of the graph
-var svgWidth = 1000;
-var svgHeight = 800;
-var margin = {top: 10, right: 20, bottom: 30, left: 50},
+var svgWidth = 1200;
+var svgHeight = 1000;
+var margin = {top: 400, right: 100, bottom: 80, left: 200},
     chartWidth = svgWidth - margin.left - margin.right,
     chartHeight = svgHeight - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
-var svg = d3.select("#my-dataviz")
-  .append("svg")
+
+
+function loadScatterplot(Year) { 
+  d3.select("#my-dataviz").html("");
+  var svg = d3.select("#my-dataviz")
+    .append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight)
-  .append("g")
+    .append("g")
     .attr("transform",
           `translate(${margin.left}, ${margin.top})`);
-
-function loadScatterplot() { 
+ 
 //Read the data
   d3.csv("data/Revenue_Expenditure_data.csv", function(data) {    
-  
+      // var max = d3.max(data, d=> d.Revenue);
+      // var min = d3.min(data, d=> d.Revenue)
+      //var max = d3.max(data, d=> d.Expenditure)
+      //console.log(max)
       // Add X axis
       
     var xScale = d3.scaleLinear()
@@ -116,25 +41,26 @@ function loadScatterplot() {
       .attr("transform", `translate(0, ${chartHeight})`)
       .call(d3.axisBottom(xScale))
       .append("text")
-      .text("Expenditure")
-      .attr("transform", `translate(${chartWidth/2}, 30)`)
+      .attr("transform", `translate(${chartWidth/2}, 60)`)
       .attr("font-family", "sans-serif")
-      .attr("font-size", "30px")
-      .attr("color", "black");
+      .attr("font-size", "20px")
+      .style("fill", "black")
+      .text("Expenditure");
 
     
     // Add Y axis
     var yScale = d3.scaleLinear()
-      .domain(d3.extent(data, d =>d.Revenue))
+      // .domain(d3.extent(data, d =>d.Revenue))
+      .domain([0,100])
       .range([chartHeight, 0]);
     svg.append("g")
       .call(d3.axisLeft(yScale))
       .append("text")
-      .text("Revenue")
-      .attr("transform", `translate(${chartHeight/2}, 10)`)
+      .attr("transform", `translate(-50, ${chartHeight/2})`)
       .attr("font-family", "sans-serif")
-      .attr("font-size", "30px")
-      .attr("color", "black");
+      .attr("font-size", "20px")
+      .style("fill", "black")
+      .text("Revenue");
     
     // -1- Create a tooltip div that is hidden by default:
     var tooltip = d3.select("#my-dataviz")
@@ -187,20 +113,21 @@ function loadScatterplot() {
     }
     
    
-  var data20 = data.filter(d => d.Year==yearSwitcher.currentYear);
-
+    //var data20 = data.filter(d => d.Year==yearSwitcher.currentYear);
+    var yearData = data.filter(d => d.Year==Year);
     // Add circles
     svg.append("g")
       .attr("id", "circles")
       .selectAll("circle")
-      .data(data20)
+      .attr("transform", `translate(${chartHeight}, ${chartWidth})`)
+      .data(yearData)
       .enter()
       .append("circle")
       .attr("cx", function (d) { 
-        console.log(d.Expenditure)
+        //console.log(d.Expenditure)
         return xScale(+d.Expenditure) } )
       .attr("cy", function (d) { return yScale(+d.Revenue) } )
-      .attr("r", 6)
+      .attr("r", 10)
       .attr("stroke", "black")
       .style("fill", "blue")
       //.style("fill", myColor(this))
@@ -217,53 +144,50 @@ function loadScatterplot() {
       })
       .attr("font-family", "sans-serif")
       .attr("font-size", "10px")
-      .attr("fill", "red");
+      .style("fill", "red");
+      // .on("mouseover", showTooltip )
+      // .on("mousemove", moveTooltip )
+      // .on("mouseleave", hideTooltip )
 
-    // -3- Trigger the functions
-    // .on("mouseover", showTooltip )
-    // .on("mousemove", moveTooltip )
-    // .on("mouseleave", hideTooltip )
-
-    // Text for the title of the plot
-    // svg.append("text")
-    // .attr("transform","translate(" + w/2 + ",0)")
-    // .style("text-anchor","middle")
-    // .text("The World's Expenditure vs Revenue in "+currentYear)
-    // .classed("title",true);
-
-    //////////////////////////////////////On click update with new data////////////////////////////////////
-    d3.selectAll("button").on("click", function(){
-      currentYear = d3.select(this).text()
-      console.log(currentYear);
-      yearSwitcher = new yearSwitcherConstructor(currentYear);
-        //Update all circles
-        svg.selectAll("circle")
-        .data(data)
-        .transition()
-        .duration(1000)    
-        .attr("cx", function(d) {
-          return xScale(+d[yearSwitcher.Expenditure.round(2)]);
-        })
-        .attr("cy", function(d) {
-          return yScale(+d[yearSwitcher.Revenue.round(2)]);
-        })
-        //Update label's position
-        svg.selectAll("text")
-        .data(data)
-        .transition()
-        .duration(1000)
-        .attr("dx", function(d) {
-          return xScale(+d[yearSwitcher.Expenditure.round(2)]);
-        })
-        .attr("dy", function(d) {
-          return yScale(+d[yearSwitcher.Revenue.round(2)]);
+    //Text for the title of the plot
+    svg.append("text")
+    .attr("transform","translate(" + chartWidth/2 + ",0)")
+    .style("text-anchor","middle")
+    .text("The World's Expenditure vs Revenue in "+currentYear)
+    .classed("title",true);
+  })};
+    ////////////////////////////////////On click update with new data////////////////////////////////////
+  
+d3.selectAll("button").on("click", function(){
+        currentYear = d3.select(this).text()
+        // console.log(currentYear);
+        loadScatterplot(currentYear);
+        // yearSwitcher = new yearSwitcherConstructor(currentYear);
+        //   //Update all circles
+        //   svg.selectAll("circle")
+        //   .data(data)
+        //   .transition()
+        //   .duration(1000)    
+        //   .attr("cx", function(d) {
+        //     return xScale(+d[yearSwitcher.Expenditure]);
+        //   })
+        //   .attr("cy", function(d) {
+        //     return yScale(+d[yearSwitcher.Revenue]);
+        //   })
+        //   //Update label's position
+        //   svg.selectAll("text")
+        //   .data(data)
+        //   .transition()
+        //   .duration(1000)
+        //   .attr("dx", function(d) {
+        //     return xScale(+d[yearSwitcher.Expenditure]);
+        //   })
+        //   .attr("dy", function(d) {
+        //     return yScale(+d[yearSwitcher.Revenue]);
+        //   });
+        //   //Update title
+        //   svg.selectAll(".title")
+        //   .text("The World's Expenditure vs Revenue in "+currentYear);
         });
-        //Update title
-        svg.selectAll(".title")
-        .text("The World's Expenditure vs Revenue in "+currentYear);
-      });
-  });
-}
-
-loadScatterplot();
-
+      
+    loadScatterplot(2020);
