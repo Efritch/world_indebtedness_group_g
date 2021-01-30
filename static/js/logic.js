@@ -3286,12 +3286,6 @@ function loadScatterplot(Year) {
       // .on("mousemove", moveTooltip )
       // .on("mouseleave", hideTooltip )
 
-    //Text for the title of the plot
-    svg.append("text")
-    .attr("transform","translate(" + chartWidth/2 + ",0)")
-    .style("text-anchor","middle")
-    .text("The World's Expenditure vs Revenue in "+currentYear)
-    .classed("title",true);
   };
     ////////////////////////////////////On click update with new data////////////////////////////////////
   
