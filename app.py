@@ -18,6 +18,10 @@ def home():
 def line():
     return render_template('line.html')
 
+@app.route('/map')
+def map():
+    return render_template('map.html')
+
 @app.route('/bubble')
 def bubble():
     return render_template('bubble.html')
